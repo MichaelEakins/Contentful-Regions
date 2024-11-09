@@ -13,10 +13,14 @@ export const useContinents = () => {
         debug('Fetched Countries:', countriesData);
 
         const uniqueContinents = Array.from(
-          new Set(countriesData.map((country) => country.continent).filter(Boolean))
+          new Set(
+            countriesData.map((country) => 
+              country.continent === 'Oceania' ? 'Australia' : country.continent
+            ).filter(Boolean)
+          )
         ).sort();
 
-        debug('Unique Continents:', uniqueContinents);
+        debug('Unique Continents (Renamed):', uniqueContinents);
         setContinents(uniqueContinents);
       } catch (error) {
         console.error('Error fetching continents:', error);

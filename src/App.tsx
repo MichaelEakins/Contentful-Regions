@@ -4,16 +4,11 @@ import CountrySelector from './components/CountrySelector';
 import { useCities } from './hooks/useCities';
 import { useContinents } from './hooks/useContinents';
 import { useCountries } from './hooks/useCountries';
-import { debug } from './utils/debug';
 
 const App = () => {
   const { continents, selectedContinent, setSelectedContinent } = useContinents();
-  const { filteredCountries, selectedCountry, setSelectedCountry } =
-    useCountries(selectedContinent);
+  const { filteredCountries, selectedCountry, setSelectedCountry } = useCountries(selectedContinent);
   const { filteredCities, selectedCity, setSelectedCity } = useCities(selectedCountry);
-  debug('Filtered continents:', continents);
-  debug('Filtered countries:', filteredCountries);
-  debug('Filtered Cities:', filteredCities);
 
   return (
     <div>
@@ -23,7 +18,10 @@ const App = () => {
       <ContinentSelector
         continents={continents}
         selectedContinent={selectedContinent}
-        onChange={setSelectedContinent}
+        onChange={(continent) => {
+          setSelectedContinent(continent);
+          setSelectedCountry(''); // Reset country when changing continent
+        }}
       />
 
       <label>Country:</label>
@@ -35,7 +33,7 @@ const App = () => {
 
       <label>City:</label>
       <CitySelector
-        cities={filteredCities.map((city) => city.city)} 
+        cities={filteredCities.map((city) => city.city)}
         selectedCity={selectedCity}
         onChange={setSelectedCity}
       />

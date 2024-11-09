@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Country, fetchAllCountries } from '../api/countriesNowApi';
+import { debug } from '../utils/debug';
 
 export const useCountries = (selectedContinent: string) => {
   const [countries, setCountries] = useState<Country[]>([]);
@@ -11,7 +12,7 @@ export const useCountries = (selectedContinent: string) => {
       try {
         const data = await fetchAllCountries();
         setCountries(data);
-        setFilteredCountries(data);
+        debug('Loaded Countries:', data);
       } catch (error) {
         console.error('Error fetching countries:', error);
       }
@@ -20,14 +21,19 @@ export const useCountries = (selectedContinent: string) => {
     loadCountries();
   }, []);
 
-  const filteredByContinent = useMemo(() => {
-    if (!selectedContinent) return countries;
-    return countries.filter((country) => country.continent === selectedContinent);
-  }, [selectedContinent, countries]);
-
   useEffect(() => {
-    setFilteredCountries(filteredByContinent);
-  }, [filteredByContinent]);
+    if (!selectedContinent) {
+      setFilteredCountries(countries);
+    } else {
+      const filtered = countries.filter(
+        (country) => country.continent === selectedContinent
+      );
+      setFilteredCountries(filtered);
+      debug(`Filtered Countries for ${selectedContinent}:`, filtered);
+
+      setSelectedCountry('');
+    }
+  }, [selectedContinent, countries]);
 
   return { filteredCountries, selectedCountry, setSelectedCountry };
 };
