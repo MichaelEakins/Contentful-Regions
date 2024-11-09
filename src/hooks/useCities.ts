@@ -1,19 +1,25 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchAllCities } from '../api/countriesNowApi';
 import { debug } from '../utils/debug';
 
-export const useCities = (selectedCountry: string) => {
-  const [cities, setCities] = useState<any[]>([]);
-  const [filteredCities, setFilteredCities] = useState<any[]>([]);
+export interface City {
+  city: string;
+  country: string;
+  continent?: string;
+}
+
+export const useCities = (selectedCountry: string, selectedContinent: string) => {
+  const [cachedCities, setCachedCities] = useState<City[]>([]);
+  const [filteredCities, setFilteredCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<string>('');
 
   useEffect(() => {
     const loadCities = async () => {
       try {
-        const data = await fetchAllCities(); // Fetches city data in the format provided
-        debug('Fetched Cities:', data);
-        setCities(data);
-        setFilteredCities(data);
+        const data: City[] = await fetchAllCities();
+        setCachedCities(data);
+        setFilteredCities(data); // Initialize with all cities
+        debug('Cached Cities:', data);
       } catch (error) {
         console.error('Error fetching cities:', error);
       }
@@ -22,14 +28,17 @@ export const useCities = (selectedCountry: string) => {
     loadCities();
   }, []);
 
-  const filteredByCountry = useMemo(() => {
-    if (!selectedCountry) return cities;
-    return cities.filter((city) => city.country === selectedCountry);
-  }, [selectedCountry, cities]);
-
   useEffect(() => {
-    setFilteredCities(filteredByCountry);
-  }, [filteredByCountry]);
+    if (selectedCountry) {
+      const filtered = cachedCities.filter((city) => city.country === selectedCountry);
+      setFilteredCities(filtered);
+    } else if (selectedContinent) {
+      const filtered = cachedCities.filter((city) => city.continent === selectedContinent);
+      setFilteredCities(filtered);
+    } else {
+      setFilteredCities(cachedCities); // Reset to all cities
+    }
+  }, [selectedCountry, selectedContinent, cachedCities]);
 
   return { filteredCities, selectedCity, setSelectedCity };
 };

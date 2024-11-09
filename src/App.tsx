@@ -7,8 +7,8 @@ import { useCountries } from './hooks/useCountries';
 
 const App = () => {
   const { continents, selectedContinent, setSelectedContinent } = useContinents();
-  const { filteredCountries, selectedCountry, setSelectedCountry } = useCountries(selectedContinent);
-  const { filteredCities, selectedCity, setSelectedCity } = useCities(selectedCountry);
+  const { countries, selectedCountry, setSelectedCountry } = useCountries(selectedContinent);
+  const { filteredCities, selectedCity, setSelectedCity } = useCities(selectedCountry, selectedContinent);
 
   return (
     <div>
@@ -20,15 +20,19 @@ const App = () => {
         selectedContinent={selectedContinent}
         onChange={(continent) => {
           setSelectedContinent(continent);
-          setSelectedCountry(''); // Reset country when changing continent
+          setSelectedCountry('');
+          setSelectedCity('');
         }}
       />
 
       <label>Country:</label>
       <CountrySelector
-        countries={filteredCountries.map((c) => c.name)}
+        countries={countries.map((c) => c.name)}
         selectedCountry={selectedCountry}
-        onChange={setSelectedCountry}
+        onChange={(country) => {
+          setSelectedCountry(country);
+          setSelectedCity('');
+        }}
       />
 
       <label>City:</label>

@@ -1,12 +1,10 @@
-import React from 'react';
-
 interface CitySelectorProps {
   cities: string[];
   selectedCity: string;
   onChange: (city: string) => void;
 }
 
-const CitySelector: React.FC<CitySelectorProps> = ({ cities, selectedCity, onChange }) => {
+const CitySelector: React.FC<CitySelectorProps> = ({ cities = [], selectedCity, onChange }) => {
   return (
     <select
       value={selectedCity}

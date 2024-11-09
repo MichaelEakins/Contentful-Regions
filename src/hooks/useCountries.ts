@@ -4,15 +4,16 @@ import { debug } from '../utils/debug';
 
 export const useCountries = (selectedContinent: string) => {
   const [countries, setCountries] = useState<Country[]>([]);
-  const [filteredCountries, setFilteredCountries] = useState<Country[]>([]);
+  const [cachedCountries, setCachedCountries] = useState<Country[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>('');
 
   useEffect(() => {
     const loadCountries = async () => {
       try {
         const data = await fetchAllCountries();
-        setCountries(data);
-        debug('Loaded Countries:', data);
+        setCachedCountries(data);
+        setCountries(data); // Initially show all countries
+        debug('Loaded and Cached Countries:', data);
       } catch (error) {
         console.error('Error fetching countries:', error);
       }
@@ -23,17 +24,11 @@ export const useCountries = (selectedContinent: string) => {
 
   useEffect(() => {
     if (!selectedContinent) {
-      setFilteredCountries(countries);
+      setCountries(cachedCountries); // Reset to all countries if no continent is selected
     } else {
-      const filtered = countries.filter(
-        (country) => country.continent === selectedContinent
-      );
-      setFilteredCountries(filtered);
-      debug(`Filtered Countries for ${selectedContinent}:`, filtered);
-
-      setSelectedCountry('');
+      setCountries(cachedCountries.filter((country) => country.continent === selectedContinent));
     }
-  }, [selectedContinent, countries]);
+  }, [selectedContinent, cachedCountries]);
 
-  return { filteredCountries, selectedCountry, setSelectedCountry };
+  return { countries, selectedCountry, setSelectedCountry };
 };

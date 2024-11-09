@@ -4,6 +4,7 @@ import { debug } from '../utils/debug';
 
 export const useContinents = () => {
   const [continents, setContinents] = useState<string[]>([]);
+  const [cachedContinents, setCachedContinents] = useState<string[]>([]);
   const [selectedContinent, setSelectedContinent] = useState<string>('');
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export const useContinents = () => {
           )
         ).sort();
 
-        debug('Unique Continents (Renamed):', uniqueContinents);
+        setCachedContinents(uniqueContinents);
         setContinents(uniqueContinents);
       } catch (error) {
         console.error('Error fetching continents:', error);
@@ -30,5 +31,5 @@ export const useContinents = () => {
     loadContinents();
   }, []);
 
-  return { continents, selectedContinent, setSelectedContinent };
+  return { continents, cachedContinents, selectedContinent, setSelectedContinent };
 };
