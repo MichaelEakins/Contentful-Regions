@@ -4,6 +4,7 @@ import CountrySelector from './components/CountrySelector';
 import { useCities } from './hooks/useCities';
 import { useContinents } from './hooks/useContinents';
 import { useCountries } from './hooks/useCountries';
+import "./ReactotronConfig";
 
 const App = () => {
   const { continents, selectedContinent, setSelectedContinent } = useContinents();
